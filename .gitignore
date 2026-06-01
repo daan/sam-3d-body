@@ -110,6 +110,8 @@ lightning_logs/
 results/
 sandbox/
 debug/
+out/
+*.rrd
 
 # Project-specific: Local tools
 .sl/
