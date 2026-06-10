@@ -52,6 +52,7 @@ PERSON_KEYS_TO_KEEP = {
     # Scene placement
     "focal_length",
     "pred_cam_t",
+    "cam_int",             # (3, 3) per-frame intrinsics, original-image coords
 }
 
 # Toggled by --save-vertices. ~50-80 KB compressed per person/frame.
@@ -101,6 +102,13 @@ def unpad_person_inplace(p: dict, pad_left: int, pad_top: int) -> None:
         kp[..., 0] -= pad_left
         kp[..., 1] -= pad_top
         p["pred_keypoints_2d"] = kp
+    if "cam_int" in p and p["cam_int"] is not None:
+        # Bring the principal point back to original-image coords too, so the
+        # saved cam_int reprojects the saved (un-padded) 3D onto the video.
+        ci = np.asarray(p["cam_int"], dtype=np.float64).copy()
+        ci[0, 2] -= pad_left
+        ci[1, 2] -= pad_top
+        p["cam_int"] = ci
     for k in ("bbox", "lhand_bbox", "rhand_bbox"):
         v = p.get(k, None)
         if v is None:

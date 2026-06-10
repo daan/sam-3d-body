@@ -212,6 +212,9 @@ class SAM3DBodyEstimator:
                     "pred_joint_coords": out["pred_joint_coords"][idx],
                     "pred_global_rots": out["joint_global_rots"][idx],
                     "mhr_model_params": out["mhr_model_params"][idx],
+                    # Per-frame camera actually used (provided or FOV-estimated),
+                    # so 3D can be reprojected to 2D downstream.
+                    "cam_int": cam_int[0].detach().cpu().numpy(),
                 }
             )
 
